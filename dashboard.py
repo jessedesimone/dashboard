@@ -1,6 +1,8 @@
 #!/usr/local/bin/python3.9
 '''
-to run type: 'streamlit run dashboard.py' in terminal
+to run type in terminal:
+> 'Python3.9 dashboard.py'     #activation of streamlit; throws error without
+> 'streamlit run dashboard.py'         #run application
 
 sources: 
 git@github.com:Sven-Bo/streamlit-sales-dashboard.git
