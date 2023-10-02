@@ -71,16 +71,12 @@ product = st.sidebar.multiselect(
     default=df["product_type"].unique()
 )
 
-# df_selection = df.query(
-#     "City == @city & Customer_type ==@customer_type & Gender == @gender"
-# )
-
 df_selection = df.query(
     "(City == @city) and (Customer_type ==@customer_type) and (Gender == @gender) and (product_type ==  @product)"
 )
 
 #comment to turn off dataframe return with selection
-st.dataframe(df_selection)
+#st.dataframe(df_selection)
 
 # Check if the dataframe is empty:
 if df_selection.empty:
@@ -147,6 +143,40 @@ fig_hourly_sales.update_layout(
     yaxis=(dict(showgrid=False)),
 )
 
+# Create a scatter plot
+# sales_by_hour = df_selection.groupby(by=["hour"])[["Total"]].sum()
+# fig_sales_by_hour_scatter = px.scatter(
+#     sales_by_hour,
+#     x=sales_by_hour.index,
+#     y="Total",
+#     size="Total",
+#     title="<b>Sales by hour</b>",
+#     color_discrete_sequence=["#0083B8"] * len(sales_by_hour),
+#     template="plotly_white",
+# )
+# fig_sales_by_hour_scatter.update_layout(
+#     xaxis=dict(tickmode="linear"),
+#     plot_bgcolor="rgba(0,0,0,0)",
+#     yaxis=(dict(showgrid=False)),
+# )
+
+income_price = df_selection.groupby(by=["Unit price"])[["gross income"]].mean()
+data1 = px.scatter(
+    income_price, 
+    x = income_price.index, 
+    y = "gross income", 
+    size = "gross income",
+    color = "gross income",
+    trendline="ols",
+    marginal_y="violin",
+    marginal_x="box",
+)
+data1['layout'].update(title="Average Gross Income by Unit Price",
+                       titlefont = dict(size=20),xaxis = dict(title="Price",titlefont=dict(size=19)),
+                       yaxis = dict(title = "Income", titlefont = dict(size=19)))
+
+
+
 #customization
 # create grid for display
 def make_grid(cols,rows):
@@ -155,17 +185,22 @@ def make_grid(cols,rows):
         with st.container():
             grid[i] = st.columns(rows)
     return grid
-mygrid = make_grid(1,2)
+mygrid = make_grid(2,2)
 
 #plot using grid customization
 mygrid[0][0].plotly_chart(fig_product_sales, use_container_width=True)
 mygrid[0][1].plotly_chart(fig_hourly_sales, use_container_width=True)
+mygrid[1][0].plotly_chart(data1,use_container_width=False)
 
 #plot using streamlin columns
 #st.plotly_chart(fig_product_sales)
 #left_column, right_column = st.columns(2)
 #left_column.plotly_chart(fig_hourly_sales, use_container_width=True)
 #right_column.plotly_chart(fig_product_sales, use_container_width=True)
+
+my_expander = st.expander()
+my_expander.write('Hello there!')
+clicked = my_expander.button('Click me!')
 
 # hide_st_style = """
 #             <style>
